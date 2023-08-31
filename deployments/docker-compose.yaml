@@ -1,0 +1,19 @@
+version: "3.9"
+
+services:    
+  posgres:
+    image: postgres:alpine
+    restart: always
+    container_name: postgres_db
+    environment:
+      POSTGRES_DB: "user-segmentation"
+      POSTGRES_USER: "postgres"
+      POSTGRES_PASSWORD: "12345"
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ../assets/postgres/init.sql:/docker-entrypoint-initdb.d/1-shema.sql
+
+volumes:
+  pgdata:

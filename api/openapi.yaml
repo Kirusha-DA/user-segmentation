@@ -1,0 +1,188 @@
+openapi: 3.0.3
+info:
+  title: Dynamic user-segmentation service
+  version: 0.0.1
+servers: 
+  - url: http://localhost:8080/
+    description: main server
+paths:
+  /segments:
+    post:
+      summary: adds list of segments
+      tags:
+        - Segments
+      operationId: addSegments
+      requestBody:
+        required: true
+        content: 
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RequestSegments"
+      responses:
+        "200":
+          description: adds segments one by one, so some segments might not be added
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ResponseSegments"
+                
+  /segments/{slug}:
+    delete:
+      summary: deletes segment with slug
+      tags:
+        - Segments
+      operationId: deleteSegment
+      parameters: 
+        - name: slug
+          in: path
+          required: true
+          description: unique name value
+          schema:
+            type: string
+            example: AVITO_DISCOUNT_50
+      responses:
+        "200":
+          description: deletes one segment
+          content:
+            application/json:
+              schema: 
+                $ref: "#/components/schemas/ResponseSegment"
+        "400":
+          description: appears when there is no such segment
+          content:
+            application/json:
+              schema: 
+                $ref: "#/components/schemas/ResponseSegment"
+  /users/{id}/segments:
+    post:
+      summary: adds segments to user
+      tags:
+        - UserSegments
+      operationId: addSegmentsToUser
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: user id
+          schema:
+            type: integer
+            example: 27
+      requestBody:
+        required: true
+        content: 
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RequestSegments"
+      responses:
+        "200":
+          description: creates segments shown in body
+          content:
+           application/json:
+              schema: 
+                $ref: "#/components/schemas/ResponseSegments"
+  
+    delete:
+      summary: deletes user's segments
+      tags:
+        - UserSegments
+      operationId: deleteUserSegments
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: user id
+          schema:
+            type: integer
+            example: 27
+      requestBody:
+        required: true
+        content: 
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RequestSegments"
+      responses:
+        "200":
+          description: deletes segments shown in response body
+          content:
+           application/json:
+            schema:
+              $ref: "#/components/schemas/ResponseSegments"
+                      
+
+              
+    get:
+      summary: gets user's segments
+      tags:
+        - UserSegments
+      operationId: getUserSegments
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: user id
+          schema:
+            type: integer
+            example: 27
+      responses:
+        "200":
+          description: shows user's segments
+          content:
+           application/json:
+              schema:
+                $ref: "#/components/schemas/ResponseSegmentsWithId"
+        "400":
+          description: user does not exists
+          content:
+            application/json: {}
+      
+            
+
+              
+components:
+  schemas:
+    ResponseSegment:
+      type: object
+      required: 
+        - slug
+        - message
+      properties:
+        slug:
+          type: string
+          example: AVITO_DISCOUNT_50
+        message:
+          type: string
+          example: Ok
+    RequestSegment:
+      type: object
+      required:
+        - slug
+      properties:
+        slug:
+          type: string
+          example: AVITO_DISCOUNT_50
+    RequestSegments:
+      type: array
+      items:
+        $ref: "#/components/schemas/RequestSegment"
+    ResponseSegments:
+      type: array
+      items:
+        $ref: "#/components/schemas/ResponseSegment"
+    ResponseSegmentWithId:
+      type: object
+      required:
+        - id
+        - slug
+      properties:
+        id:
+          type: integer
+          example: 213
+        slug:
+          type: string
+          example: AVITO_DISCOUNT_50
+    ResponseSegmentsWithId:
+      type: array
+      items: 
+        $ref: "#/components/schemas/ResponseSegmentWithId"
+        
+          
